@@ -1,0 +1,298 @@
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+<style>
+.form-inline {  
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin-left: 100px;
+margin-top: 100px;
+}
+
+.form-inline label {
+  margin: 5px 10px 5px 0;
+}
+
+.form-inline input {
+  vertical-align: middle;
+  margin: 5px 10px 5px 0;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.form-inline button {
+  padding: 10px 20px;
+  background-color: dodgerblue;
+  border: 1px solid #ddd;
+  color: white;
+  cursor: pointer;
+}
+
+.form-inline button:hover {
+  background-color: royalblue;
+}
+
+@media (max-width: 800px) {
+  .form-inline input {
+    margin: 10px 0;
+  }
+  
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+</style>
+<script type="text/javascript">
+  function updateElementIndex(el, prefix, ndx) {
+      var id_regex = new RegExp('(' + prefix + '-\\d+)');
+      var replacement = prefix + '-' + ndx;
+      if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+      if (el.id) el.id = el.id.replace(id_regex, replacement);
+      if (el.name) el.name = el.name.replace(id_regex, replacement);
+  }
+  function cloneMore(selector, prefix) {
+    
+        var newElement = $(selector).clone(true);
+    
+    
+        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+    
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
+            var buysell = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var contract = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var callput = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var strike = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var daystoexpiry = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');   
+            var volatility = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var premium = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var debitcredit = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var initialtradecost = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var cashrequired = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+            var initialcashrequired = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+
+            var id1 = 'id_' + buysell;
+            var id2 = 'id_' + contract;
+            var id3 = 'id_' + callput;
+            var id4 = 'id_' + strike;
+            var id5 = 'id_' + daystoexpiry;
+            var id6 = 'id_' + volatility;
+            var id7 = 'id_' + premium;
+            var id8 = 'id_' + debitcredit;
+            var id9 = 'id_' + initialtradecost;
+            var id10 = 'id_' + cashrequired;
+            var id11 = 'id_' + initialcashrequired;
+
+            $(this).attr({'name': buysell,'id': id1}).val('').removeAttr('checked');
+            $(this).attr({'name': contract,'id': id2}).val('').removeAttr('checked');
+            $(this).attr({'name': callput,'id': id3}).val('').removeAttr('checked');
+            $(this).attr({'name': strike,'id': id4}).val('').removeAttr('checked');
+            $(this).attr({'name': daystoexpiry,'id': id5}).val('').removeAttr('checked');
+
+            $(this).attr({'name': volatility,'id': id6}).val('').removeAttr('checked');
+            $(this).attr({'name': premium,'id': id7}).val('').removeAttr('checked');
+            $(this).attr({'name': debitcredit,'id': id8}).val('').removeAttr('checked');
+            $(this).attr({'name': initialtradecost,'id': id9}).val('').removeAttr('checked');
+            $(this).attr({'name': cashrequired,'id': id10}).val('').removeAttr('checked');
+            $(this).attr({'name': initialcashrequired,'id': id11}).val('').removeAttr('checked');
+
+        });
+        console.log(newElement)
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        var conditionRow = $('.form-row:not(:last)');
+        conditionRow.find('.add-form-row')
+        .removeClass('btn-success').addClass('btn-danger')
+        .removeClass('add-form-row').addClass('remove-form-row')
+        .attr('value', '-')
+        .html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
+        return false;
+    }
+    $(document).on('click', '.add-form-row', function(e){
+        e.preventDefault();
+        cloneMore('.form-row:last', 'form'); 
+
+        var total = $('#id_form-TOTAL_FORMS').val();
+        $('#id_form-'+(total-1)+'-expiry_date')[0].setAttribute("onchange","myFunction("+(total-1) + ")")
+    });
+</script>
+
+<script>
+  // for merge (Spread)
+$( "#btn_merge_position").click(function() {
+  $('#errSpan').html('');
+  $('#succSpan').html('');
+  if($('.poschk:checked').length != 2 ) {
+    $('#errSpan').html('Please select 2 position for merge!');
+  } else {
+    var ids = [];
+    $('.poschk:checked:checked').each(function() {
+      ids.push($(this).closest('tr').attr('id'));
+    });
+    // add spread hidden input
+    let idd = ids[0]+'-'+ids[1];
+    if($('#spread-'+idd).length == 0) {
+      $('#spreadDiv').append('<input type="hidden" name="spreadid[]" value="'+idd+'" id="spread-'+idd+'">');
+    }
+    calcSpread(ids, true);
+
+    totalCashReq = 0;
+  
+    $("tr.spread").each(function() {
+      let ids = $(this).attr('id');
+      let idsarr = ids.split('-');
+      
+      totalCashReq = Number(totalCashReq) + Number($('#cr-'+ids).html());
+    });
+    $("#octbody tr").each(function() {
+        if(!$(this).hasClass('pos')) return true; 
+        let key = $(this).attr('id');
+        if($('[name="cash_required['+key+']"]').val() != "") totalCashReq = totalCashReq + Number($('[name="cash_required['+key+']"]').val());
+    });
+    ///$('#totalCashReq').html(totalCashReq.toFixed(2));
+  }
+});
+</script>
+</head>
+<body>
+    <form action="/calc" method="post">
+      {% csrf_token %}
+        <div class="form-inline">
+          {{ form.as_p }}
+        </div>
+        
+        {{ formsets.management_form }}
+        {% for frm1 in formsets %}
+        <div class="form-row">
+          <table id="portfolio_table" class="table table-sm table-bordered table-striped table-hover results_table options_strategy_table">
+            <thead>
+              <tr>
+                <th>Sr No.</th>
+                <th>Buy/Sell</th>
+                <th>Contract</th>
+                <th>Call/Put/Stock</th>
+                <th>Days to Expiry</th>
+                <th>Strike</th>
+                <th>Volatility</th>
+                <th>Premium</th>
+                <th>Debit/Credit</th>
+                <th>Initial Trade Cost</th>
+                <th>Cash Required</th>
+                <th>Initial Cash Req.</th>
+              </tr>
+            </thead>
+            <tbody id="octbody">
+                <td id="08xS2" class="pos">
+                  <input type="checkbox" id="srno" name="srno" value="">
+                </td>
+                <td scope="col">
+                  {{ frm1.buysell }}
+                </td>
+                <td scope="col">
+                  {{ frm1.contract }}
+                </td>
+                <td scope="col">
+                  {{ frm1.callput }}
+                </td>
+                <td scope="col">
+                  {{ frm1.expiry_date }}
+                </td>
+                <td scope="col">
+                  {{ frm1.strike }}
+                </td>
+                <td scope="col">
+                  {{ frm1.volatility }}
+                </td>
+                <td scope="col">
+                  {{ premium }}
+                </td>
+                <td scope="col">
+                  {{ debit_credit }}
+                </td>
+                <td scope="col">
+                  {{ frm1.initial_trade_cost }}
+                </td>
+                <td scope="col">
+                  {{ frm1.cash_required }}
+                </td>
+                <td scope="col">
+                  {{ frm1.initial_cash_req }}
+                </td>
+              </tr>
+              <tr id="hFxDc-0r1Zf" style="background-color:#FFEA00" class="spread"></tr>
+            </tbody>
+          </table>
+        </div>
+        {% endfor %}
+      
+      <div class="row">
+        <div class="col-md-2">
+          <button value="submit" class="btn btn-block btn-primary btn-sm pull-right">Calculate</button>
+        </div>
+      </div>  
+    </form>
+    <div class="row">
+      <div class="col-md-2">
+        <button value="submit" class="btn btn-block btn-primary btn-sm pull-right">Merge Position</button>
+      </div>
+    </div><br>
+    <div class="row">
+      <div class="col-md-2">
+        <button value="submit" class="btn btn-block btn-primary btn-sm pull-right">Save</button>
+      </div>
+
+    </div>  
+    <div id="form-container"></div>
+      <div class="form-group">
+        <input type="button" class="add-form-row btn-primary" id="add-form-row" value="+" style="width: 30px;" >
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var strike = '{{ strike }}'.replace(/&quot;/g, '"');
+        var dictt = JSON.parse(strike);
+        $("#id_form-0-expiry_date").change(myFunction(0));
+
+        // console.log($("#id_expiry_date option:selected").val())x
+        function myFunction(id) {
+            function myFunc(values, i) {
+                text = text + '<option value=' + values + '>' + values + '</option><br>'
+            }
+            let text = "";
+            $("#id_form-"+id+"-strike").empty();
+
+            var v = dictt[$("#id_form-"+id+"-expiry_date option:selected").val()]
+            console.log(v)
+            v.forEach(myFunc);
+            console.log(text)
+            $("#id_form-"+id+"-strike").append(text)
+        };
+    </script>
+    <script>
+      const loadFormBtn = document.getElementById('add-form-row');
+      const formContainer = document.getElementById('form-container');
+  
+      loadFormBtn.addEventListener('click', () => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/getCalc');
+          xhr.onload = () => {
+              if (xhr.status === 200) {
+                  formContainer.innerHTML = xhr.responseText;
+              }
+          };
+          xhr.send();
+      });
+  </script>
+</body>
+
+</html>
